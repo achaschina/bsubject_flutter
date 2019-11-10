@@ -1,16 +1,20 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:subject_app/bloc.dart';
-import 'package:subject_app/data/data_parser.dart' as prefix0;
-// import 'package:subject_app/state.dart';
 import './models/user_model.dart';
 import './data/data_parser.dart';
 
 void main() => runApp(MyApp());
 
+Future<User> _loadUserFromJSON() async {
+  String jsonString = await loadUserAsset();
+  return userFromJson(jsonString);
+}
+
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,13 +37,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static String userJSON;
-  loadUser() async {
-    userJSON = await loadUserAsset();
-    print(userJSON);
+  static User _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserFromJSON().then((user) {
+      setState(() {
+        print(user.name);
+        _user = user;
+      });
+    });
   }
 
-  UserBloc _userBloc = new UserBloc(initialUser: userFromJson(userJSON));
+  UserBloc _userBloc = new UserBloc(initialUser: _user);
 
   @override
   void dispose() {
@@ -55,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
+            // Text(
+            //   'You have pushed the button this many times:1111',
+            // ),
             Text(
               '${snapshot.hasData}',
               style: Theme.of(context).textTheme.display1,
