@@ -1,32 +1,40 @@
+import 'main.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter/material.dart';
 
+import './data/data_parser.dart';
 import './models/user_model.dart';
 
-enum NavBarItems { Account, Messages, Users }
+Future<User> _loadUserFromJSON() async {
+  String jsonString = await loadUserAsset();
+  return userFromJson(jsonString);
+}
 
-class UserBloc {
+abstract class UserModel extends ChangeNotifier {
+  void changeUserName();
 
+  Observable<User> get userObservable;
+}
+
+class UserModelImplementation extends UserModel {
   User initialUser = new User();
-  BehaviorSubject<User> _subjectUser;
+  BehaviorSubject<User> subjectUser;
 
-  UserBloc({initialUser}) {
-    _subjectUser = new BehaviorSubject<User>.seeded(initialUser); //initializes the subject with element already
+  UserModelImplementation() {
+    _loadUserFromJSON().then((user) {
+      subjectUser = new BehaviorSubject<User>.seeded(user);
+      notifyListeners();
+      getIt.signalReady(this);
+    });
   }
 
-  Observable<User> get userObservable => _subjectUser.stream;
+  @override
+  Observable<User> get userObservable => subjectUser.stream;
 
+  @override
   void changeUserName() {
     initialUser.name = 'New Test Name';
-    print(initialUser);
-    _subjectUser.add(initialUser);
-  }
-
-  // void decrement() {
-  //   initialCount--;
-  //   _subjectCounter.add(initialCount);
-  // }
-
-  void dispose() {
-    _subjectUser.close();
+    subjectUser.add(initialUser);
+    notifyListeners();
   }
 }

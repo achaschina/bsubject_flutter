@@ -1,11 +1,23 @@
 {
-    "name": "John Dow",
-    "id": "55555",
-    "messages": [
-      {"author": "Jenny Dow", "text": "Type or paste JSON here" },
-      {"author": "Jenny Dow", "text": "Or choose a sample above" },
-      {"author": "Stan Smith", "text": "quicktype will generate code in your" },
-      {"author": "Stan Smith", "text": "chosen language to parse the sample data" }
-    ],
-    "notes": []
-  }
+  "name": "John Dow",
+  "id": "55555",
+  "email": "test@test.com",
+  "messages": [{
+      "receiver": "Jenny Dow",
+      "text": "Type or paste JSON here"
+    },
+    {
+      "receiver": "Jenny Dow",
+      "text": "Or choose a sample above"
+    },
+    {
+      "receiver": "Stan Smith",
+      "text": "quicktype will generate code in your"
+    },
+    {
+      "receiver": "Stan Smith",
+      "text": "chosen language to parse the sample data"
+    }
+  ],
+  "notes": []
+}

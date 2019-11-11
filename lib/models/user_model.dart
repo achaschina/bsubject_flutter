@@ -12,12 +12,14 @@ String userToJson(User data) => json.encode(data.toJson());
 class User {
   String name;
   String id;
+  String email;
   List<Message> messages;
   List<dynamic> notes;
 
   User({
     this.name,
     this.id,
+    this.email,
     this.messages,
     this.notes,
   });
@@ -25,6 +27,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
         id: json["id"],
+        email: json["email"],
         messages: List<Message>.from(
             json["messages"].map((x) => Message.fromJson(x))),
         notes: List<dynamic>.from(json["notes"].map((x) => x)),
@@ -33,14 +36,15 @@ class User {
   Map<String, dynamic> toJson() => {
         "name": name,
         "id": id,
+        "email": email,
         "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
         "notes": List<dynamic>.from(notes.map((x) => x)),
       };
 }
 
 class Message {
-  String receiver;
-  String text;
+  final String receiver;
+  final String text;
 
   Message({
     @required this.receiver,

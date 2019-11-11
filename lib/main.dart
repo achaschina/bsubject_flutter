@@ -1,17 +1,18 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-import 'package:subject_app/bloc.dart';
-import './models/user_model.dart';
-import './data/data_parser.dart';
+import './bloc.dart';
+import './widgets/messages.dart';
+import './widgets/notes.dart';
+import './widgets/user_card.dart';
 
-void main() => runApp(MyApp());
+GetIt getIt = GetIt.instance;
 
-Future<User> _loadUserFromJSON() async {
-  String jsonString = await loadUserAsset();
-  return userFromJson(jsonString);
+void main() {
+  getIt.registerSingleton<UserModel>(UserModelImplementation(),
+      signalsReady: true);
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -37,71 +38,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static User _user;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadUserFromJSON().then((user) {
-      setState(() {
-        print(user.name);
-        _user = user;
-      });
+  }
+
+  _bottomNavigationTap(index) {
+    setState(() {
+      _currentIndex = index;
     });
   }
 
-  UserBloc _userBloc = new UserBloc(initialUser: _user);
+  update() => setState(() => {});
 
   @override
   void dispose() {
-    _userBloc.dispose();
+    getIt<UserModel>().removeListener(update);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: _userBloc.userObservable,
-      builder: (context, snapshot) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // Text(
-            //   'You have pushed the button this many times:1111',
-            // ),
-            Text(
-              '${snapshot.hasData}',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Scaffold buildHomePage() {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('User Manager App'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
+      body: streamBuilder(),
       bottomNavigationBar: BottomNavigationBar(
-        onTap: null,
-        // (index) {
-        //   if (index == 0) _navbarBloc.add(NavBarItems.Account);
-        //   if (index == 1) _navbarBloc.add(NavBarItems.Messages);
-        //   if (index == 2) _navbarBloc.add(NavBarItems.Users);
-        // },
-        currentIndex: 0,
+        onTap: _bottomNavigationTap,
+        currentIndex: _currentIndex,
         selectedItemColor: Colors.amberAccent,
         items: [
           BottomNavigationBarItem(
@@ -109,8 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.account_box),
           ),
           BottomNavigationBarItem(
-            title: Text('Users'),
-            icon: Icon(Icons.supervised_user_circle),
+            title: Text('Notes'),
+            icon: Icon(Icons.note_add),
           ),
           BottomNavigationBarItem(
             title: Text('Messages'),
@@ -119,5 +86,40 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  Widget streamBuilder() {
+    return StreamBuilder(
+      stream: getIt.ready,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text('Select lot');
+          case ConnectionState.waiting:
+            return Text('Awaiting bids...');
+          case ConnectionState.active:
+            return (snapshot.data != null)
+                ? switchPage(snapshot.data)
+                : Text('Cant load User from backend');
+          case ConnectionState.done:
+            return Text('\$${snapshot.data} (closed)');
+        }
+      },
+    );
+  }
+
+  Widget switchPage(data) {
+    switch (_currentIndex) {
+      case 0:
+        return UserCard();
+        break;
+      case 1:
+        return Notes();
+        break;
+      case 2:
+        return Messages();
+        break;
+    }
   }
 }
