@@ -16,9 +16,11 @@ class _UserCardState extends State<UserCard> {
   @override
   void initState() {
     getIt<UserModel>().userObservable.listen((user) {
-      setState(() {
-        _user = user;
-      });
+      if (this.mounted) {
+        setState(() {
+          _user = user;
+        });
+      }
     });
     super.initState();
   }
@@ -33,8 +35,7 @@ class _UserCardState extends State<UserCard> {
 
   @override
   Widget build(BuildContext context) {
-    Widget userWidget = (_user != null) ? buildUserCard() : Text('loading...');
-    return userWidget;
+    return (_user != null) ? buildUserCard() : Text('loading...');
   }
 
   Widget buildUserCard() {
@@ -54,6 +55,8 @@ class _UserCardState extends State<UserCard> {
             ),
           ),
           subtitle: Text('Email: ${_user.email}')),
+
+
     ));
   }
 }

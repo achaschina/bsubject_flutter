@@ -19,5 +19,8 @@
       "text": "chosen language to parse the sample data"
     }
   ],
-  "notes": []
+  "notes": [{
+    "what":"Buy a milk", "when": "2019-11-11 00:00:00.000"
+  }
+]
 }

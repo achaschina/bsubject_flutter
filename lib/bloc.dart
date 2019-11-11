@@ -11,7 +11,7 @@ Future<User> _loadUserFromJSON() async {
 }
 
 abstract class UserModel extends ChangeNotifier {
-  void changeUserName();
+  void addNewNote(note, date);
 
   Observable<User> get userObservable;
 }
@@ -23,6 +23,7 @@ class UserModelImplementation extends UserModel {
   UserModelImplementation() {
     _loadUserFromJSON().then((user) {
       subjectUser = new BehaviorSubject<User>.seeded(user);
+      initialUser = user;
       notifyListeners();
       getIt.signalReady(this);
     });
@@ -32,8 +33,8 @@ class UserModelImplementation extends UserModel {
   Observable<User> get userObservable => subjectUser.stream;
 
   @override
-  void changeUserName() {
-    initialUser.name = 'New Test Name';
+  void addNewNote(note, date) {
+    initialUser.notes.add(Note(what: note, when: date));
     subjectUser.add(initialUser);
     notifyListeners();
   }
