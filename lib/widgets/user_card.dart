@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:subject_app/widgets/update_user.dart';
-import '../bloc.dart';
+import '../service.dart';
 
 import '../models/user_model.dart';
 

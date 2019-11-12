@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-import './bloc.dart';
+import './service.dart';
 import './widgets/messages.dart';
 import './widgets/notes.dart';
 import './widgets/user_card.dart';

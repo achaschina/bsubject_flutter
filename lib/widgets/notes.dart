@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import './new_note.dart';
-import '../bloc.dart';
+import '../service.dart';
 
 class Notes extends StatefulWidget {
   @override
