@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:subject_app/widgets/update_user.dart';
 import '../bloc.dart';
 
 import '../models/user_model.dart';
@@ -39,6 +40,19 @@ class _UserCardState extends State<UserCard> {
   }
 
   Widget buildUserCard() {
+    handlePopUpChanged() {
+      showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return GestureDetector(
+            onTap: () {},
+            child: UpdateUser(),
+            behavior: HitTestBehavior.opaque,
+          );
+        },
+      );
+    }
+
     return Container(
         child: Card(
       margin: EdgeInsets.all(15),
@@ -54,9 +68,11 @@ class _UserCardState extends State<UserCard> {
               style: Theme.of(context).textTheme.title,
             ),
           ),
-          subtitle: Text('Email: ${_user.email}')),
-
-
+          subtitle: Text('Email: ${_user.email}'),
+          trailing: GestureDetector(
+            child: Icon(Icons.edit),
+            onTap: handlePopUpChanged,
+          )),
     ));
   }
 }

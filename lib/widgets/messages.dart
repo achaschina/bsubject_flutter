@@ -9,6 +9,7 @@ class Messages extends StatefulWidget {
 }
 
 class _MessagesState extends State<Messages> {
+  String _username;
   List _messages;
   GetIt getIt = GetIt.I;
 
@@ -16,6 +17,7 @@ class _MessagesState extends State<Messages> {
   void initState() {
     getIt<UserModel>().userObservable.listen((user) {
       setState(() {
+        _username = user.name;
         _messages = user.messages;
       });
     });
@@ -32,18 +34,37 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    return (_messages != null) ? loadMessages() : Text('loading...');
+    return (_messages != null)
+        ? Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                child: Text(
+                  'Messages for: ${_username}',
+                  style: TextStyle(
+                      color: Colors.deepPurpleAccent,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20),
+                ),
+              ),
+              loadMessages()
+            ],
+          )
+        : Text('loading...');
   }
 
   Widget loadMessages() {
-    return ListView.builder(
-      itemCount: _messages.length,
-      itemBuilder: (context, index) {
-        final message = _messages[index];
-        return ListTile(
-            title: Text('${message.receiver}:'),
-            subtitle: Text('${message.text}'));
-      },
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: ListView.builder(
+        itemCount: _messages.length,
+        itemBuilder: (context, index) {
+          final message = _messages[index];
+          return ListTile(
+              title: Text('${message.receiver}:'),
+              subtitle: Text('${message.text}'));
+        },
+      ),
     );
   }
 }

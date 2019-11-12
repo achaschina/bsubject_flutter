@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
-import '../models/user_model.dart';
 import '../bloc.dart';
 
 class Note extends StatefulWidget {

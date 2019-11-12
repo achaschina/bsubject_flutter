@@ -12,6 +12,7 @@ Future<User> _loadUserFromJSON() async {
 
 abstract class UserModel extends ChangeNotifier {
   void addNewNote(note, date);
+  void updateUser(username, email);
 
   Observable<User> get userObservable;
 }
@@ -35,6 +36,14 @@ class UserModelImplementation extends UserModel {
   @override
   void addNewNote(note, date) {
     initialUser.notes.add(Note(what: note, when: date));
+    subjectUser.add(initialUser);
+    notifyListeners();
+  }
+
+  @override
+  updateUser(username, email) {
+    initialUser.name = username;
+    initialUser.email = email;
     subjectUser.add(initialUser);
     notifyListeners();
   }
